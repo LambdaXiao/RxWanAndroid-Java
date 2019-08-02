@@ -4,7 +4,10 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
@@ -47,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        Logger.addLogAdapter(new AndroidLogAdapter());
+        Logger.d("@@@@@@@@@@@@@@@@@@");
+        Logger.clearLogAdapters();
     }
 
 }

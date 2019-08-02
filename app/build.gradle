@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {
@@ -27,4 +31,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'com.airbnb.android:lottie:2.8.0'//动画库
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'//下拉刷新库
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'//下拉刷新库自定义头部
+    implementation 'com.orhanobut:logger:2.2.0'//log
+    implementation 'com.android.support:multidex:1.0.3'//dex分包库
 }
