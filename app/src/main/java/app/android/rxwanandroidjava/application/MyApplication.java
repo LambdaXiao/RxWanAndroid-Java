@@ -4,12 +4,6 @@ import android.content.Context;
 
 import androidx.multidex.MultiDex;
 
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * 描述：
  */
