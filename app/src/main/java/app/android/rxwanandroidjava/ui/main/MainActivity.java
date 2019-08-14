@@ -36,16 +36,22 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
+                        switchFragment(0);
                         return true;
                     case R.id.navigation_system:
+                        switchFragment(1);
                         return true;
                     case R.id.navigation_gzh:
+                        switchFragment(2);
                         return true;
                     case R.id.navigation_project:
+                        switchFragment(3);
                         return true;
                     case R.id.navigation_mine:
-
+                        switchFragment(4);
                         return true;
+                    default:
+                        break;
                 }
                 return false;
             }

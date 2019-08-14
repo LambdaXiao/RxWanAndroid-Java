@@ -3,6 +3,6 @@
 
 #### 技术栈
 - Jetpack(ViewModel+LiveData+Lifecycle)
-- Retrofit 网络框架 
+- Retrofit2+RxJava2 网络框架
 - Glide 图片加载库
 

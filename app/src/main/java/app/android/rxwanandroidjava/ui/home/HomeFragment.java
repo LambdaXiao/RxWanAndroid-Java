@@ -2,6 +2,7 @@ package app.android.rxwanandroidjava.ui.home;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
@@ -15,15 +16,14 @@ import java.util.List;
 
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.base.BaseFragment;
-import app.android.rxwanandroidjava.common.network.BaseData;
-import app.android.rxwanandroidjava.common.network.RetrofitManager;
 import app.android.rxwanandroidjava.ui.home.adapter.ArticleListAdapter;
 import app.android.rxwanandroidjava.ui.home.bean.FeedArticleData;
-import app.android.rxwanandroidjava.ui.home.bean.FeedArticleListData;
+
 
 public class HomeFragment extends BaseFragment {
 
     private HomeViewModel mViewModel;
+    private TextView mTitle;
     private RecyclerView mRecyclerView;
     private SmartRefreshLayout mSmartRefreshLayout;
     private ArticleListAdapter articleListAdapter;
@@ -40,6 +40,9 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void initLayout(View view) {
+        mTitle = view.findViewById(R.id.common_toolbar_title_tv);
+        mTitle.setText(getString(R.string.menu_home));
+
         mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mRecyclerView = view.findViewById(R.id.mRecyclerView);
         mSmartRefreshLayout = view.findViewById(R.id.mSmartRefreshLayout);
@@ -47,14 +50,20 @@ public class HomeFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
-        mFeedArticleDataList = new ArrayList<FeedArticleData>();
-        articleListAdapter = new ArticleListAdapter(getActivity(), mFeedArticleDataList);
-        mRecyclerView.setAdapter(articleListAdapter);
     }
 
     @Override
     protected void initData() {
-        getArticle();
+        mFeedArticleDataList = new ArrayList<FeedArticleData>();
+        articleListAdapter = new ArticleListAdapter(getActivity(), mFeedArticleDataList);
+        mRecyclerView.setAdapter(articleListAdapter);
+
+        mViewModel.getLiveData().observe(this, feedArticleListData -> {
+            mFeedArticleDataList.clear();
+            mFeedArticleDataList.addAll(feedArticleListData.getDatas());
+            articleListAdapter.setList(mFeedArticleDataList);
+        });
+        mViewModel.getArticle();
     }
 
     @Override
@@ -64,23 +73,5 @@ public class HomeFragment extends BaseFragment {
         // TODO: Use the ViewModel
     }
 
-    void getArticle() {
 
-        RetrofitManager.getInstance().enqueue(RetrofitManager.getInstance().getApiConfig().getHomeArticle(0), new RetrofitManager.CallBack() {
-            @Override
-            public void onSuccess(Object object) {
-                BaseData baseData = (BaseData) object;
-                FeedArticleListData data = baseData.getData();
-                mFeedArticleDataList.clear();
-                mFeedArticleDataList.addAll(data.getDatas());
-                articleListAdapter.setList(mFeedArticleDataList);
-            }
-
-            @Override
-            public void onFailure(double errorCode, String errorMsg) {
-
-            }
-        });
-
-    }
 }

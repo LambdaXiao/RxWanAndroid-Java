@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/login_bg"
     tools:context=".ui.main.SplashActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -14,6 +14,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="palm_dude.json"
+        app:lottie_fileName="world_locations.json"
         app:lottie_loop="true" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,13 @@
 package app.android.rxwanandroidjava.common.network;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.ObservableTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -12,73 +16,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitManager {
 
     private Retrofit mRetrofit;
-    private ApiConfig mApiConfig;
-
-    private RetrofitManager() {
-        if (mRetrofit == null) {
-            mRetrofit = new Retrofit.Builder()
-                    .baseUrl(ApiConfig.HOST)
-                    .addConverterFactory(GsonConverterFactory.create())   //数据解析器
-                    .build();
-            mApiConfig = mRetrofit.create(ApiConfig.class);
-        }
-    }
+    //使用Lambda表达式，更加优雅:
+    final ObservableTransformer schedulersTransformer = observable -> observable
+            .subscribeOn(Schedulers.io())
+            .unsubscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread());
+    private Retrofit.Builder build;
+    private ApiService mApiService;
 
     public static RetrofitManager getInstance() {
         return RetrofitManagerInstance.mRetrofitManager;
-    }
-
-    public Retrofit getRetrofit() {
-        return mRetrofit;
-    }
-
-    public ApiConfig getApiConfig() {
-        return mApiConfig;
-    }
-
-    /**
-     * 通用网络请求方法
-     *
-     * @param call
-     * @param mCallBack
-     */
-    public void enqueue(Call<BaseData> call, CallBack mCallBack) {
-        call.enqueue(new Callback<BaseData>() {
-            @Override
-            public void onResponse(Call<BaseData> call, Response<BaseData> response) {
-                try {
-                    BaseData baseData = response.body();
-                    Double errorCode = baseData.getErrorCode();
-                    String errorMsg = baseData.getErrorMsg();
-                    if (errorCode == 0) {
-                        //请求成功
-                        mCallBack.onSuccess(baseData);
-                    } else {
-                        //请求失败
-                        mCallBack.onFailure(errorCode, errorMsg);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //数据解析失败
-                    mCallBack.onFailure(-1, "数据解析异常，请重试！");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseData> call, Throwable t) {
-                //网络请求失败
-                mCallBack.onFailure(-1, "请求异常，请重试！");
-            }
-        });
-    }
-
-    /**
-     * 数据回调
-     */
-    public interface CallBack {
-        void onSuccess(Object object);
-
-        void onFailure(double errorCode, String errorMsg);
     }
 
     /**
@@ -86,6 +33,48 @@ public class RetrofitManager {
      */
     private static class RetrofitManagerInstance {
         private static final RetrofitManager mRetrofitManager = new RetrofitManager();
+    }
+
+    private RetrofitManager() {
+        if (mRetrofit == null) {
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS).build();
+            build = new Retrofit.Builder()
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())   //数据解析器
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+            mRetrofit = build.baseUrl(ApiService.HOST).build();
+        }
+    }
+
+    /**
+     * 获取API实例
+     *
+     * @return
+     */
+    public ApiService getService() {
+        if (mApiService == null) {
+            mApiService = mRetrofit.create(ApiService.class);
+        }
+        return mApiService;
+    }
+
+    public <T> T getService(Class<T> clazz) {
+        return mRetrofit.create(clazz);
+    }
+
+    public <T> T getService(String baseUrl, Class<T> clazz) {
+        return build.baseUrl(baseUrl).build().create(clazz);
+    }
+
+    /**
+     * 线程调度
+     *
+     * @param <T>
+     * @return
+     */
+    public <T> ObservableTransformer<T, T> threadTransformer() {
+        return schedulersTransformer;
     }
 
 }

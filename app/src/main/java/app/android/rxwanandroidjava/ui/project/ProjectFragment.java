@@ -2,6 +2,7 @@ package app.android.rxwanandroidjava.ui.project;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
@@ -12,6 +13,7 @@ import app.android.rxwanandroidjava.common.base.BaseFragment;
 public class ProjectFragment extends BaseFragment {
 
     private ProjectViewModel mViewModel;
+    private TextView mTitle;
 
     public static ProjectFragment newInstance() {
         return new ProjectFragment();
@@ -24,7 +26,8 @@ public class ProjectFragment extends BaseFragment {
 
     @Override
     protected void initLayout(View view) {
-
+        mTitle = view.findViewById(R.id.common_toolbar_title_tv);
+        mTitle.setText(getString(R.string.menu_project));
     }
 
     @Override

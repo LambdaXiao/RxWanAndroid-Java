@@ -1,17 +1,24 @@
 package app.android.rxwanandroidjava.ui.mine;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.base.BaseFragment;
+import app.android.rxwanandroidjava.ui.mine.activity.AboutUserActivity;
 
 public class MineFragment extends BaseFragment {
 
     private MineViewModel mViewModel;
+    private Toolbar mToolbar;
+    private TextView mTitle;
 
     public static MineFragment newInstance() {
         return new MineFragment();
@@ -25,6 +32,10 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void initLayout(View view) {
 
+        mToolbar = view.findViewById(R.id.common_toolbar);
+        mTitle = view.findViewById(R.id.common_toolbar_title_tv);
+        mTitle.setText(getString(R.string.menu_me));
+        initToolbar();
     }
 
     @Override
@@ -39,4 +50,24 @@ public class MineFragment extends BaseFragment {
         // TODO: Use the ViewModel
     }
 
+    /**
+     * 初始化Toolbar
+     */
+    private void initToolbar() {
+        mToolbar.inflateMenu(R.menu.menu_setting);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_setting:
+                        //点击设置
+                        startActivity(new Intent(getActivity(), AboutUserActivity.class));
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
 }

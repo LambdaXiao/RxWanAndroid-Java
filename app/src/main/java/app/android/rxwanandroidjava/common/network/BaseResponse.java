@@ -1,20 +1,21 @@
 package app.android.rxwanandroidjava.common.network;
 
-import app.android.rxwanandroidjava.ui.home.bean.FeedArticleListData;
+import java.io.Serializable;
 
 /**
- * 描述：
+ * 描述：网络请求返回的实体类Bean
  */
-public class BaseData {
-    FeedArticleListData data;
+public class BaseResponse<T> implements Serializable {
+    private static int SUCCESS_CODE = 0;//成功的code
+    T data;
     double errorCode;
     String errorMsg;
 
-    public FeedArticleListData getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(FeedArticleListData data) {
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -32,5 +33,9 @@ public class BaseData {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public boolean isSuccess() {
+        return getErrorCode() == SUCCESS_CODE;
     }
 }
