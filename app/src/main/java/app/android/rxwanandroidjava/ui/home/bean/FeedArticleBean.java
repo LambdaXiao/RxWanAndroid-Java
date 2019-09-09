@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 首页文章
  */
 
-public class FeedArticleData implements Serializable {
+public class FeedArticleBean implements Serializable {
 
     //    private String apkLink;
     private String author;

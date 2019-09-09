@@ -16,13 +16,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitManager {
 
     private Retrofit mRetrofit;
+    private Retrofit.Builder build;
+    private ApiService mApiService;
     //使用Lambda表达式，更加优雅:
     final ObservableTransformer schedulersTransformer = observable -> observable
             .subscribeOn(Schedulers.io())
             .unsubscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
-    private Retrofit.Builder build;
-    private ApiService mApiService;
 
     public static RetrofitManager getInstance() {
         return RetrofitManagerInstance.mRetrofitManager;
@@ -41,7 +41,9 @@ public class RetrofitManager {
                     .connectTimeout(30, TimeUnit.SECONDS).build();
             build = new Retrofit.Builder()
                     .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())   //数据解析器
+                    //Gson数据解析器
+                    .addConverterFactory(GsonConverterFactory.create())
+                    //RxJava2
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
             mRetrofit = build.baseUrl(ApiService.HOST).build();
         }

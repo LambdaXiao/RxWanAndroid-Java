@@ -1,6 +1,9 @@
 package app.android.rxwanandroidjava.common.network;
 
-import app.android.rxwanandroidjava.ui.home.bean.FeedArticleListData;
+import java.util.List;
+
+import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
+import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -12,5 +15,8 @@ public interface ApiService {
     public static String HOST = "https://www.wanandroid.com/";
 
     @GET("article/list/{pagenum}/json")
-    Observable<BaseResponse<FeedArticleListData>> getHomeArticle(@Path("pagenum") int pagenum);
+    Observable<BaseResponse<FeedArticleList>> getHomeArticle(@Path("pagenum") int pagenum);
+
+    @GET("banner/json")
+    Observable<BaseResponse<List<BannerBean>>> getBanner();
 }

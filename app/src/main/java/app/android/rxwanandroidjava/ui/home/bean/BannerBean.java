@@ -4,7 +4,7 @@ package app.android.rxwanandroidjava.ui.home.bean;
  * banner数据
  */
 
-public class BannerData {
+public class BannerBean {
 
     private int id;
     private String url;

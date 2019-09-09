@@ -8,15 +8,15 @@ import java.util.List;
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.adapter.BaseRecyclerAdapter;
 import app.android.rxwanandroidjava.common.adapter.RecyclerViewHolder;
-import app.android.rxwanandroidjava.ui.home.bean.FeedArticleData;
+import app.android.rxwanandroidjava.ui.home.bean.FeedArticleBean;
 
 
 /**
  * 描述：
  */
-public class ArticleListAdapter extends BaseRecyclerAdapter<FeedArticleData> {
+public class ArticleListAdapter extends BaseRecyclerAdapter<FeedArticleBean> {
 
-    public ArticleListAdapter(Context ctx, List<FeedArticleData> list) {
+    public ArticleListAdapter(Context ctx, List<FeedArticleBean> list) {
         super(ctx, list);
     }
 
@@ -26,7 +26,7 @@ public class ArticleListAdapter extends BaseRecyclerAdapter<FeedArticleData> {
     }
 
     @Override
-    protected void bindData(RecyclerViewHolder helper, int position, FeedArticleData article) {
+    protected void bindData(RecyclerViewHolder helper, int position, FeedArticleBean article) {
         if (!TextUtils.isEmpty(article.getTitle())) {
             helper.setText(R.id.item_search_pager_title, article.getTitle());
         }

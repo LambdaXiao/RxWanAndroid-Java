@@ -6,10 +6,10 @@ import java.util.List;
  * 首页文章列表
  */
 
-public class FeedArticleListData {
+public class FeedArticleList {
 
     private int curPage;
-    private List<FeedArticleData> datas;
+    private List<FeedArticleBean> datas;
     private int offset;
     private boolean over;
     private int pageCount;
@@ -24,11 +24,11 @@ public class FeedArticleListData {
         this.curPage = curPage;
     }
 
-    public List<FeedArticleData> getDatas() {
+    public List<FeedArticleBean> getDatas() {
         return datas;
     }
 
-    public void setDatas(List<FeedArticleData> datas) {
+    public void setDatas(List<FeedArticleBean> datas) {
         this.datas = datas;
     }
 
