@@ -1,4 +1,4 @@
-package app.android.rxwanandroidjava.common.network;
+package app.android.rxwanandroidjava.repository.remote.network;
 
 import android.net.ParseException;
 import android.text.TextUtils;

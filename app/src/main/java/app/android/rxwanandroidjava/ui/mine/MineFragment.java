@@ -2,21 +2,27 @@ package app.android.rxwanandroidjava.ui.mine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.aop.SingleClick;
 import app.android.rxwanandroidjava.common.base.BaseFragment;
+import app.android.rxwanandroidjava.databinding.MineFragmentBinding;
 import app.android.rxwanandroidjava.ui.mine.activity.AboutUserActivity;
 
 public class MineFragment extends BaseFragment {
 
+    private MineFragmentBinding mFragmentBinding;
     private MineViewModel mViewModel;
     private Toolbar mToolbar;
     private TextView mTitle;
@@ -25,16 +31,14 @@ public class MineFragment extends BaseFragment {
         return new MineFragment();
     }
 
+    @Nullable
     @Override
-    protected int getLayoutResource() {
-        return R.layout.mine_fragment;
-    }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-    @Override
-    protected void initLayout(View view) {
+        mFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.mine_fragment, container, false);
 
-        mToolbar = view.findViewById(R.id.common_toolbar);
-        mTitle = view.findViewById(R.id.common_toolbar_title_tv);
+        mToolbar = mFragmentBinding.getRoot().findViewById(R.id.common_toolbar);
+        mTitle = mFragmentBinding.getRoot().findViewById(R.id.common_toolbar_title_tv);
         mTitle.setText(getString(R.string.menu_me));
         initToolbar();
 
@@ -45,17 +49,14 @@ public class MineFragment extends BaseFragment {
                 startActivity(new Intent(getActivity(), AboutUserActivity.class));
             }
         });
-    }
 
-    @Override
-    protected void initData() {
-
+        return mFragmentBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MineViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(MineViewModel.class);
         // TODO: Use the ViewModel
     }
 

@@ -1,4 +1,4 @@
-package app.android.rxwanandroidjava.common.network;
+package app.android.rxwanandroidjava.repository.remote.network;
 
 import java.io.Serializable;
 

@@ -1,7 +1,8 @@
-package app.android.rxwanandroidjava.common.network;
+package app.android.rxwanandroidjava.repository.remote.network;
 
 import java.util.concurrent.TimeUnit;
 
+import app.android.rxwanandroidjava.repository.remote.ApiService;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;

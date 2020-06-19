@@ -1,7 +1,8 @@
-package app.android.rxwanandroidjava.common.network;
+package app.android.rxwanandroidjava.repository.remote;
 
 import java.util.List;
 
+import app.android.rxwanandroidjava.repository.remote.network.BaseResponse;
 import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
 import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
 import io.reactivex.Observable;

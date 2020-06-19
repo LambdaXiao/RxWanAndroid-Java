@@ -1,18 +1,19 @@
 package app.android.rxwanandroidjava.ui.home;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.base.BaseFragment;
+import app.android.rxwanandroidjava.databinding.HomeFragmentBinding;
 import app.android.rxwanandroidjava.ui.home.adapter.ArticleListAdapter;
 import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
 import app.android.rxwanandroidjava.ui.home.bean.FeedArticleBean;
@@ -30,11 +32,9 @@ import app.android.rxwanandroidjava.widget.RecyclerViewBanner;
 
 public class HomeFragment extends BaseFragment {
 
+    private HomeFragmentBinding mFragmentBinding;
     private HomeViewModel mViewModel;
     private TextView mTitle;
-    private RecyclerView mRecyclerView;
-    private SmartRefreshLayout mSmartRefreshLayout;
-    private RecyclerViewBanner rvbanner;
     private ArticleListAdapter articleListAdapter;
     private List<FeedArticleBean> mFeedArticleDataList;
     private List<BannerBean> mBannerList;
@@ -46,25 +46,32 @@ public class HomeFragment extends BaseFragment {
         return new HomeFragment();
     }
 
+    @Nullable
     @Override
-    protected int getLayoutResource() {
-        return R.layout.home_fragment;
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.home_fragment, container, false);
+        return mFragmentBinding.getRoot();
     }
 
     @Override
-    protected void initLayout(View view) {
-        mTitle = view.findViewById(R.id.common_toolbar_title_tv);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        mFragmentBinding.setVm(mViewModel);
+        mFragmentBinding.setLifecycleOwner(this);
+        initLayout();
+        initData();
+    }
+
+    protected void initLayout() {
+        mTitle = mFragmentBinding.getRoot().findViewById(R.id.common_toolbar_title_tv);
         mTitle.setText(getString(R.string.menu_home));
 
-        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-
-        mRecyclerView = view.findViewById(R.id.mRecyclerView);
-        mSmartRefreshLayout = view.findViewById(R.id.mSmartRefreshLayout);
-        rvbanner = view.findViewById(R.id.rv_banner);
         //banner
-        rvbanner.setIndicatorInterval(5000);
         mBannerList = new ArrayList<>();
-        rvbanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
+        mFragmentBinding.rvBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
             @Override
             public void switchBanner(int position, AppCompatImageView bannerView) {
                 if (mActivity != null) {
@@ -78,7 +85,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        rvbanner.setOnRvBannerClickListener(new RecyclerViewBanner.OnRvBannerClickListener() {
+        mFragmentBinding.rvBanner.setOnRvBannerClickListener(new RecyclerViewBanner.OnRvBannerClickListener() {
             @Override
             public void onClick(int position) {
 //                Banner banner = banners.get(position);
@@ -92,16 +99,16 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setHasFixedSize(true);
-        mSmartRefreshLayout.setEnableLoadMore(true);
-        mSmartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+        mFragmentBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mFragmentBinding.mRecyclerView.setHasFixedSize(true);
+        mFragmentBinding.mSmartRefreshLayout.setEnableLoadMore(true);
+        mFragmentBinding.mSmartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 isRefresh = false;
                 isLoadMore = true;
                 pagenum++;
-                mViewModel.getArticle(pagenum);
+                mViewModel.requestArticleList(pagenum);
             }
 
             @Override
@@ -109,45 +116,39 @@ public class HomeFragment extends BaseFragment {
                 isRefresh = true;
                 isLoadMore = false;
                 pagenum = 0;
-                mViewModel.getArticle(pagenum);
+                mViewModel.requestArticleList(pagenum);
             }
-        });
-    }
-
-    @Override
-    protected void initData() {
-
-        mViewModel.getBannerData().observe(this, bannerBeans -> {
-            mBannerList.clear();
-            mBannerList.addAll(bannerBeans);
-            rvbanner.setRvBannerData(mBannerList);
         });
 
         mFeedArticleDataList = new ArrayList<FeedArticleBean>();
         articleListAdapter = new ArticleListAdapter(getActivity(), mFeedArticleDataList);
-        mRecyclerView.setAdapter(articleListAdapter);
-        //数据变化观察
-        mViewModel.getLiveData().observe(this, feedArticleListData -> {
+        mFragmentBinding.mRecyclerView.setAdapter(articleListAdapter);
+    }
+
+    protected void initData() {
+
+        //Banner数据变化观察
+        mViewModel.getBannerData().observe(getViewLifecycleOwner(), bannerBeans -> {
+            mBannerList.clear();
+            mBannerList.addAll(bannerBeans);
+            mFragmentBinding.rvBanner.setRvBannerData(mBannerList);
+        });
+
+        //列表数据变化观察
+        mViewModel.getArticleList().observe(getViewLifecycleOwner(), feedArticleListData -> {
             if (isRefresh) {
                 mFeedArticleDataList.clear();
             }
             mFeedArticleDataList.addAll(feedArticleListData.getDatas());
             articleListAdapter.setList(mFeedArticleDataList);
-            mSmartRefreshLayout.finishRefresh();
-            mSmartRefreshLayout.finishLoadMore();
+            mFragmentBinding.mSmartRefreshLayout.finishRefresh();
+            mFragmentBinding.mSmartRefreshLayout.finishLoadMore();
             isRefresh = false;
             isLoadMore = false;
         });
 
-        mViewModel.getBanner();
-        mViewModel.getArticle(pagenum);
+        //请求数据
+        mViewModel.requestBanner();
+        mViewModel.requestArticleList(pagenum);
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-
 }

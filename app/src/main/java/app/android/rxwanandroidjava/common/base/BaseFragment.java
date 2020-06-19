@@ -1,74 +1,46 @@
 package app.android.rxwanandroidjava.common.base;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import app.android.rxwanandroidjava.application.MyApplication;
+import app.android.rxwanandroidjava.common.GlobalViewModel;
+import app.android.rxwanandroidjava.common.lifecycleobserver.FragmentLifecycleObserver;
 
 
 /**
- * 基类Fragment
+ * 所有Fragment的父类
  */
 public abstract class BaseFragment extends Fragment {
-    /**
-     * DEBUG标签
-     */
-    private static final String DEBUG_TAG = "BaseFragment";
-    /**
-     * 关联的Activity
-     */
-    protected Activity mActivity;
-    /**
-     * 全局Application实例
-     */
-    protected MyApplication mApplication;
 
-    /**
-     * 虚函数，继承此类指定Activity的layout布局文件
-     */
-    protected abstract int getLayoutResource();
-
-    /**
-     * 虚函数，继承此类初始化个性化的布局
-     */
-    protected abstract void initLayout(View view);
-
-    /**
-     * 虚函数，继承此类初始化相关数据
-     */
-    protected abstract void initData();
+    public GlobalViewModel sharedViewModel;  // 全局共享
+    protected AppCompatActivity mActivity;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            mActivity = getActivity();
-        } catch (Exception e) {
-            Log.w(DEBUG_TAG, "activity no extend BaseActivity");
-        }
-        mApplication = (MyApplication) mActivity.getApplication();
+        sharedViewModel = getAppViewModelProvider().get(GlobalViewModel.class);
 
+        getLifecycle().addObserver(FragmentLifecycleObserver.getInstance());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(getLayoutResource(), container, false);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (AppCompatActivity) context;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        initLayout(view);
-        initData();
+    // 给当前BaseFragment用的
+    private ViewModelProvider getAppViewModelProvider() {
+        return ((MyApplication) mActivity.getApplicationContext()).getAppViewModelProvider(mActivity);
     }
 
 
