@@ -1,4 +1,4 @@
-# RxWanAndroid-Java
+# WanAndroid-Java
 鸿神玩Android学习网站APP Java版
 
 #### 技术栈
