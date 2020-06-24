@@ -1,8 +1,6 @@
 package app.android.rxwanandroidjava.repository.remote.network;
 
 import android.net.ParseException;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.google.gson.JsonParseException;
 
@@ -12,34 +10,43 @@ import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
-import app.android.rxwanandroidjava.application.MyApplication;
+import app.android.rxwanandroidjava.common.Constants;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 /**
  * 描述：观察者（数据回调处理基类）
  */
-public abstract class BaseObserver<T extends BaseResponse> implements Observer<T> {
+public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
 
-    @Override
-    public void onSubscribe(Disposable d) {
+    private boolean isShow = false;
 
+    public BaseObserver(boolean isShow) {
+        this.isShow = isShow;
     }
 
     @Override
-    public void onNext(T baseResponse) {
+    public void onSubscribe(Disposable d) {
+        // todo 显示加载框
+        if (isShow) {
+            LoadingDialog.getInstance().show();
+        }
+    }
+
+    @Override
+    public void onNext(BaseResponse<T> response) {
         try {
-            if (baseResponse.isSuccess()) {
+            if (response.isSuccess()) {
                 //请求成功
-                onSuccess(baseResponse);
+                onSuccess(response.getData());
             } else {
                 //请求失败
-                onFailure(baseResponse.getErrorCode(), baseResponse.getErrorMsg(), baseResponse);
+                onFailure(response.getErrorCode(), response.getErrorMsg(), response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             //数据解析失败
-            Toast.makeText(MyApplication.getApplication(), "数据解析异常，请重试！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, e.getMessage(), response);
         }
     }
 
@@ -47,35 +54,29 @@ public abstract class BaseObserver<T extends BaseResponse> implements Observer<T
     public void onError(Throwable e) {
         if (e instanceof retrofit2.HttpException) {
             //HTTP错误
-            Toast.makeText(MyApplication.getApplication(), "网络(协议)异常！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, "网络(协议)异常！", null);
         } else if (e instanceof ConnectException || e instanceof UnknownHostException) {
             //连接错误
-            Toast.makeText(MyApplication.getApplication(), "连接失败！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, "连接失败！", null);
         } else if (e instanceof InterruptedIOException) {
             //连接超时
-            Toast.makeText(MyApplication.getApplication(), "连接超时！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, "连接超时！", null);
         } else if (e instanceof JsonParseException || e instanceof JSONException || e instanceof ParseException) {
             //解析错误
-            Toast.makeText(MyApplication.getApplication(), "数据解析异常！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, "数据解析异常！", null);
         } else {
             //其他错误
-            Toast.makeText(MyApplication.getApplication(), "其他未知错误！", Toast.LENGTH_SHORT).show();
+            onFailure(Constants.ERROR_CODE, "其他未知错误！", null);
         }
     }
 
     @Override
     public void onComplete() {
-
+        // todo 隐藏加载框
+        LoadingDialog.getInstance().hide();
     }
 
-    public abstract void onSuccess(T response);
+    public abstract void onSuccess(T data);
 
-    public void onFailure(double errorCode, String errorMsg, T response) {
-        //子类重写该方法时注意不要super()方法，否则此处也会被调用
-        if (TextUtils.isEmpty(errorMsg)) {
-            Toast.makeText(MyApplication.getApplication(), "请求异常，请重试！", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MyApplication.getApplication(), errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    }
+    public abstract void onFailure(int errorCode, String errorMsg, BaseResponse<T> response);
 }

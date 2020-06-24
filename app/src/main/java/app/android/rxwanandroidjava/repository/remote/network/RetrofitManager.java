@@ -1,5 +1,6 @@
 package app.android.rxwanandroidjava.repository.remote.network;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import app.android.rxwanandroidjava.repository.remote.ApiService;
@@ -26,14 +27,14 @@ public class RetrofitManager {
             .observeOn(AndroidSchedulers.mainThread());
 
     public static RetrofitManager getInstance() {
-        return RetrofitManagerInstance.mRetrofitManager;
+        return RetrofitManagerInstance.RETROFIT_MANAGER;
     }
 
-    /**
-     * 静态内部类方式创建单例模式
-     */
-    private static class RetrofitManagerInstance {
-        private static final RetrofitManager mRetrofitManager = new RetrofitManager();
+    public <T> T getService(String baseUrl, Class<T> clazz) {
+        if (!Objects.equals(mRetrofit.baseUrl().toString(), baseUrl)) {
+            mRetrofit = build.baseUrl(baseUrl).build();
+        }
+        return mRetrofit.create(clazz);
     }
 
     private RetrofitManager() {
@@ -66,8 +67,11 @@ public class RetrofitManager {
         return mRetrofit.create(clazz);
     }
 
-    public <T> T getService(String baseUrl, Class<T> clazz) {
-        return build.baseUrl(baseUrl).build().create(clazz);
+    /**
+     * 静态内部类方式创建单例模式
+     */
+    private static class RetrofitManagerInstance {
+        private static final RetrofitManager RETROFIT_MANAGER = new RetrofitManager();
     }
 
     /**

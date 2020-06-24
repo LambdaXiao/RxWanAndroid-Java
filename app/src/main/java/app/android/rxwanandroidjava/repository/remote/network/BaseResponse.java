@@ -2,14 +2,16 @@ package app.android.rxwanandroidjava.repository.remote.network;
 
 import java.io.Serializable;
 
+import app.android.rxwanandroidjava.common.Constants;
+
 /**
  * 描述：网络请求返回的实体类Bean
  */
 public class BaseResponse<T> implements Serializable {
-    private static int SUCCESS_CODE = 0;//成功的code
-    T data;
-    double errorCode;
-    String errorMsg;
+
+    private T data;
+    private int errorCode;
+    private String errorMsg;
 
     public T getData() {
         return data;
@@ -19,11 +21,11 @@ public class BaseResponse<T> implements Serializable {
         this.data = data;
     }
 
-    public double getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(double errorCode) {
+    public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
 
@@ -36,6 +38,6 @@ public class BaseResponse<T> implements Serializable {
     }
 
     public boolean isSuccess() {
-        return getErrorCode() == SUCCESS_CODE;
+        return getErrorCode() == Constants.SUCCESS_CODE;
     }
 }

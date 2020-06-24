@@ -32,11 +32,15 @@ public class RemoteRepository implements IRemoteRequest {
     public void getBanner(MutableLiveData<List<BannerBean>> bannerData) {
         RetrofitManager.getInstance().getService().getBanner()
                 .compose(RetrofitManager.getInstance().threadTransformer())
-                .subscribe(new BaseObserver<BaseResponse<List<BannerBean>>>() {
+                .subscribe(new BaseObserver<List<BannerBean>>(true) {
                     @Override
-                    public void onSuccess(BaseResponse<List<BannerBean>> response) {
-                        List<BannerBean> bannerList = response.getData();
-                        bannerData.setValue(bannerList);
+                    public void onSuccess(List<BannerBean> data) {
+                        bannerData.setValue(data);
+                    }
+
+                    @Override
+                    public void onFailure(int errorCode, String errorMsg, BaseResponse<List<BannerBean>> response) {
+
                     }
                 });
     }
@@ -45,11 +49,15 @@ public class RemoteRepository implements IRemoteRequest {
     public void getArticleList(MutableLiveData<FeedArticleList> feedArticleList, int pagenum) {
         RetrofitManager.getInstance().getService().getHomeArticle(pagenum)
                 .compose(RetrofitManager.getInstance().threadTransformer())
-                .subscribe(new BaseObserver<BaseResponse<FeedArticleList>>() {
+                .subscribe(new BaseObserver<FeedArticleList>(true) {
                     @Override
-                    public void onSuccess(BaseResponse<FeedArticleList> response) {
-                        FeedArticleList mArticleData = response.getData();
-                        feedArticleList.setValue(mArticleData);
+                    public void onSuccess(FeedArticleList data) {
+                        feedArticleList.setValue(data);
+                    }
+
+                    @Override
+                    public void onFailure(int errorCode, String errorMsg, BaseResponse<FeedArticleList> response) {
+
                     }
                 });
     }

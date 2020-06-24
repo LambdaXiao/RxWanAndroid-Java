@@ -7,6 +7,11 @@ import android.graphics.Color;
  */
 public class Constants {
 
+    //数据请求成功的code
+    public static int SUCCESS_CODE = 0;
+    //数据请求失败的通用code
+    public static int ERROR_CODE = -1;
+
     /**
      * Tab colors
      */
