@@ -15,17 +15,15 @@ import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
  */
 public class RemoteRepository implements IRemoteRequest {
 
-    private static RemoteRepository sRemoteRepository;
-
     public static RemoteRepository getInstance() {
-        if (sRemoteRepository == null) {
-            synchronized (RemoteRepository.class) {
-                if (sRemoteRepository == null) {
-                    sRemoteRepository = new RemoteRepository();
-                }
-            }
-        }
-        return sRemoteRepository;
+        return Holder.INSTANCE;
+    }
+
+    /**
+     * 静态内部类方式创建单例模式
+     */
+    private static class Holder {
+        private static final RemoteRepository INSTANCE = new RemoteRepository();
     }
 
     @Override

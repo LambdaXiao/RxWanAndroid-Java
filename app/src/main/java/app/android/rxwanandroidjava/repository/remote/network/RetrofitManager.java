@@ -26,17 +26,6 @@ public class RetrofitManager {
             .unsubscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
 
-    public static RetrofitManager getInstance() {
-        return RetrofitManagerInstance.RETROFIT_MANAGER;
-    }
-
-    public <T> T getService(String baseUrl, Class<T> clazz) {
-        if (!Objects.equals(mRetrofit.baseUrl().toString(), baseUrl)) {
-            mRetrofit = build.baseUrl(baseUrl).build();
-        }
-        return mRetrofit.create(clazz);
-    }
-
     private RetrofitManager() {
         if (mRetrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -47,8 +36,12 @@ public class RetrofitManager {
                     .addConverterFactory(GsonConverterFactory.create())
                     //RxJava2
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-            mRetrofit = build.baseUrl(ApiService.HOST).build();
+            mRetrofit = build.baseUrl(ApiService.BASE_URL).build();
         }
+    }
+
+    public static RetrofitManager getInstance() {
+        return Holder.INSTANCE;
     }
 
     /**
@@ -67,11 +60,18 @@ public class RetrofitManager {
         return mRetrofit.create(clazz);
     }
 
+    public <T> T getService(String baseUrl, Class<T> clazz) {
+        if (!Objects.equals(mRetrofit.baseUrl().toString(), baseUrl)) {
+            mRetrofit = build.baseUrl(baseUrl).build();
+        }
+        return mRetrofit.create(clazz);
+    }
+
     /**
      * 静态内部类方式创建单例模式
      */
-    private static class RetrofitManagerInstance {
-        private static final RetrofitManager RETROFIT_MANAGER = new RetrofitManager();
+    private static class Holder {
+        private static final RetrofitManager INSTANCE = new RetrofitManager();
     }
 
     /**

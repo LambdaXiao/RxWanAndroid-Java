@@ -11,6 +11,7 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 
 import app.android.rxwanandroidjava.common.Constants;
+import app.android.rxwanandroidjava.utils.ActivityManagerUtil;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -20,6 +21,7 @@ import io.reactivex.disposables.Disposable;
 public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
 
     private boolean isShow = false;
+    private LoadingDialog mLoadingDialog;
 
     public BaseObserver(boolean isShow) {
         this.isShow = isShow;
@@ -29,7 +31,10 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     public void onSubscribe(Disposable d) {
         // todo 显示加载框
         if (isShow) {
-            LoadingDialog.getInstance().show();
+            if (mLoadingDialog == null) {
+                mLoadingDialog = new LoadingDialog(ActivityManagerUtil.getInstance().currentActivity());
+            }
+            mLoadingDialog.showDialog();
         }
     }
 
@@ -52,6 +57,11 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
 
     @Override
     public void onError(Throwable e) {
+        // todo 隐藏加载框
+        if (mLoadingDialog != null) {
+            mLoadingDialog.hideDialog();
+        }
+
         if (e instanceof retrofit2.HttpException) {
             //HTTP错误
             onFailure(Constants.ERROR_CODE, "网络(协议)异常！", null);
@@ -73,7 +83,9 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     @Override
     public void onComplete() {
         // todo 隐藏加载框
-        LoadingDialog.getInstance().hide();
+        if (mLoadingDialog != null) {
+            mLoadingDialog.hideDialog();
+        }
     }
 
     public abstract void onSuccess(T data);

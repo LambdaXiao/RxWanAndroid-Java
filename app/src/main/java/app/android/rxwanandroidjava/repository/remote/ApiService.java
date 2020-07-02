@@ -13,7 +13,7 @@ import retrofit2.http.Path;
  * 描述：API配置
  */
 public interface ApiService {
-    public static String HOST = "https://www.wanandroid.com/";
+    String BASE_URL = "https://www.wanandroid.com/";
 
     @GET("article/list/{pagenum}/json")
     Observable<BaseResponse<FeedArticleList>> getHomeArticle(@Path("pagenum") int pagenum);

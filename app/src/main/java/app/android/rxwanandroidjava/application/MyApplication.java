@@ -1,7 +1,5 @@
 package app.android.rxwanandroidjava.application;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -9,6 +7,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.multidex.MultiDex;
+
+import app.android.rxwanandroidjava.common.GlobalViewModel;
 
 /**
  * 描述：整个项目的 Application
@@ -18,7 +18,8 @@ import androidx.multidex.MultiDex;
 public class MyApplication extends BaseApp implements ViewModelStoreOwner {
 
     private ViewModelStore mAppViewModelStore;
-    private ViewModelProvider.Factory mFactory;
+    // 贯穿整个项目的,初始化全局共享（单例的方式 MyApplication传入的ViewModelStore是同一个）
+    public GlobalViewModel mSharedViewModel;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -31,6 +32,7 @@ public class MyApplication extends BaseApp implements ViewModelStoreOwner {
         super.onCreate();
 
         mAppViewModelStore = new ViewModelStore();
+        mSharedViewModel = new ViewModelProvider(getApplication(), ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(GlobalViewModel.class);
         // todo，这里可以完成一系列的初始化工作
 
     }
@@ -55,43 +57,5 @@ public class MyApplication extends BaseApp implements ViewModelStoreOwner {
         return mAppViewModelStore;
     }
 
-    /**
-     * 暴露出去，对外提供唯一一份ViewModelProvider
-     *
-     * @param activity
-     * @return
-     */
-    public ViewModelProvider getAppViewModelProvider(Activity activity) {
-        return new ViewModelProvider((MyApplication) activity.getApplication(), getAppFactory(activity));
-    }
 
-    /**
-     * 共享
-     * 内部享有 就是为了拿到 ViewModelProvider.Factory
-     *
-     * @param activity
-     * @return
-     */
-    private ViewModelProvider.Factory getAppFactory(Activity activity) {
-        Application application = checkApplication(activity);
-        if (mFactory == null) {
-            mFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(application);
-        }
-        return mFactory;
-    }
-
-    /**
-     * 内部享有 检查Application
-     *
-     * @param activity
-     * @return
-     */
-    private Application checkApplication(Activity activity) {
-        Application application = activity.getApplication();
-        if (application == null) {
-            throw new IllegalStateException("Your activity/fragment is not yet attached to "
-                    + "Application. You can't request ViewModel before onCreate call.");
-        }
-        return application;
-    }
 }
