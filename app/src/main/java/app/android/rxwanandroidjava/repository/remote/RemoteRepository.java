@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
-import app.android.rxwanandroidjava.repository.remote.network.BaseObserver;
-import app.android.rxwanandroidjava.repository.remote.network.BaseResponse;
-import app.android.rxwanandroidjava.repository.remote.network.RetrofitManager;
+import app.android.rxwanandroidjava.repository.remote.network.ApiClient;
+import app.android.rxwanandroidjava.repository.remote.network.ObserverWrapper;
+import app.android.rxwanandroidjava.repository.remote.network.ResponseWrapper;
 import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
 import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
 
@@ -28,16 +28,16 @@ public class RemoteRepository implements IRemoteRequest {
 
     @Override
     public void getBanner(MutableLiveData<List<BannerBean>> bannerData) {
-        RetrofitManager.getInstance().getService().getBanner()
-                .compose(RetrofitManager.getInstance().threadTransformer())
-                .subscribe(new BaseObserver<List<BannerBean>>(true) {
+        ApiClient.getInstance().getService().getBanner()
+                .compose(ApiClient.getInstance().threadTransformer())
+                .subscribe(new ObserverWrapper<List<BannerBean>>(true) {
                     @Override
                     public void onSuccess(List<BannerBean> data) {
                         bannerData.setValue(data);
                     }
 
                     @Override
-                    public void onFailure(int errorCode, String errorMsg, BaseResponse<List<BannerBean>> response) {
+                    public void onFailure(int errorCode, String errorMsg, ResponseWrapper<List<BannerBean>> response) {
 
                     }
                 });
@@ -45,16 +45,16 @@ public class RemoteRepository implements IRemoteRequest {
 
     @Override
     public void getArticleList(MutableLiveData<FeedArticleList> feedArticleList, int pagenum) {
-        RetrofitManager.getInstance().getService().getHomeArticle(pagenum)
-                .compose(RetrofitManager.getInstance().threadTransformer())
-                .subscribe(new BaseObserver<FeedArticleList>(true) {
+        ApiClient.getInstance().getService().getHomeArticle(pagenum)
+                .compose(ApiClient.getInstance().threadTransformer())
+                .subscribe(new ObserverWrapper<FeedArticleList>(true) {
                     @Override
                     public void onSuccess(FeedArticleList data) {
                         feedArticleList.setValue(data);
                     }
 
                     @Override
-                    public void onFailure(int errorCode, String errorMsg, BaseResponse<FeedArticleList> response) {
+                    public void onFailure(int errorCode, String errorMsg, ResponseWrapper<FeedArticleList> response) {
 
                     }
                 });

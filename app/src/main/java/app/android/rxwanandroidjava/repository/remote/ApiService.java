@@ -2,7 +2,7 @@ package app.android.rxwanandroidjava.repository.remote;
 
 import java.util.List;
 
-import app.android.rxwanandroidjava.repository.remote.network.BaseResponse;
+import app.android.rxwanandroidjava.repository.remote.network.ResponseWrapper;
 import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
 import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
 import io.reactivex.Observable;
@@ -16,8 +16,8 @@ public interface ApiService {
     String BASE_URL = "https://www.wanandroid.com/";
 
     @GET("article/list/{pagenum}/json")
-    Observable<BaseResponse<FeedArticleList>> getHomeArticle(@Path("pagenum") int pagenum);
+    Observable<ResponseWrapper<FeedArticleList>> getHomeArticle(@Path("pagenum") int pagenum);
 
     @GET("banner/json")
-    Observable<BaseResponse<List<BannerBean>>> getBanner();
+    Observable<ResponseWrapper<List<BannerBean>>> getBanner();
 }

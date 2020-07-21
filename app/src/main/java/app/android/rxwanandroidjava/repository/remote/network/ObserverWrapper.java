@@ -18,12 +18,12 @@ import io.reactivex.disposables.Disposable;
 /**
  * 描述：观察者（数据回调处理基类）
  */
-public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
+public abstract class ObserverWrapper<T> implements Observer<ResponseWrapper<T>> {
 
     private boolean isShow = false;
     private LoadingDialog mLoadingDialog;
 
-    public BaseObserver(boolean isShow) {
+    public ObserverWrapper(boolean isShow) {
         this.isShow = isShow;
     }
 
@@ -39,7 +39,7 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
     }
 
     @Override
-    public void onNext(BaseResponse<T> response) {
+    public void onNext(ResponseWrapper<T> response) {
         try {
             if (response.isSuccess()) {
                 //请求成功
@@ -90,5 +90,5 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
 
     public abstract void onSuccess(T data);
 
-    public abstract void onFailure(int errorCode, String errorMsg, BaseResponse<T> response);
+    public abstract void onFailure(int errorCode, String errorMsg, ResponseWrapper<T> response);
 }

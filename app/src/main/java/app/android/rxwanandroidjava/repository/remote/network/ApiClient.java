@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * 描述：Retrofit网络请求统一管理
  */
-public class RetrofitManager {
+public class ApiClient {
 
     private Retrofit mRetrofit;
     private Retrofit.Builder build;
@@ -26,7 +26,7 @@ public class RetrofitManager {
             .unsubscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
 
-    private RetrofitManager() {
+    private ApiClient() {
         if (mRetrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS).build();
@@ -40,7 +40,7 @@ public class RetrofitManager {
         }
     }
 
-    public static RetrofitManager getInstance() {
+    public static ApiClient getInstance() {
         return Holder.INSTANCE;
     }
 
@@ -71,7 +71,7 @@ public class RetrofitManager {
      * 静态内部类方式创建单例模式
      */
     private static class Holder {
-        private static final RetrofitManager INSTANCE = new RetrofitManager();
+        private static final ApiClient INSTANCE = new ApiClient();
     }
 
     /**

@@ -24,6 +24,7 @@ public class MainActivity extends BaseActivity {
 
     private ArrayList<BaseFragment> mFragments;
     private int mLastFgIndex;//上一次显示的fragment下标
+    private FragmentTransaction ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class MainActivity extends BaseActivity {
         if (position >= mFragments.size()) {
             return;
         }
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft = getSupportFragmentManager().beginTransaction();
         Fragment targetFg = mFragments.get(position);
         Fragment lastFg = mFragments.get(mLastFgIndex);
         mLastFgIndex = position;

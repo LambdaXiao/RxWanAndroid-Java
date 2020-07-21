@@ -7,7 +7,7 @@ import app.android.rxwanandroidjava.common.Constants;
 /**
  * 描述：网络请求返回的实体类Bean
  */
-public class BaseResponse<T> implements Serializable {
+public class ResponseWrapper<T> implements Serializable {
 
     private T data;
     private int errorCode;
