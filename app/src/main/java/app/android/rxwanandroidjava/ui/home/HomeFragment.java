@@ -1,15 +1,9 @@
 package app.android.rxwanandroidjava.ui.home;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -21,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.android.rxwanandroidjava.R;
-import app.android.rxwanandroidjava.common.base.BaseFragment;
+import app.android.rxwanandroidjava.common.base.BaseDataBindingFragment;
 import app.android.rxwanandroidjava.databinding.HomeFragmentBinding;
 import app.android.rxwanandroidjava.ui.home.adapter.ArticleListAdapter;
 import app.android.rxwanandroidjava.ui.home.bean.BannerBean;
@@ -30,9 +24,9 @@ import app.android.rxwanandroidjava.utils.PhoneUtils;
 import app.android.rxwanandroidjava.widget.RecyclerViewBanner;
 
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseDataBindingFragment<HomeFragmentBinding> {
 
-    private HomeFragmentBinding mFragmentBinding;
+
     private HomeViewModel mViewModel;
     private TextView mTitle;
     private ArticleListAdapter articleListAdapter;
@@ -46,32 +40,22 @@ public class HomeFragment extends BaseFragment {
         return new HomeFragment();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        mFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.home_fragment, container, false);
-        return mFragmentBinding.getRoot();
+    protected int getLayoutId() {
+        return R.layout.home_fragment;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    protected void initView() {
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        mFragmentBinding.setVm(mViewModel);
-        mFragmentBinding.setLifecycleOwner(this);
-        initLayout();
-        initData();
-    }
+        mDataBind.setVm(mViewModel);
 
-    protected void initLayout() {
-        mTitle = mFragmentBinding.getRoot().findViewById(R.id.common_toolbar_title_tv);
+        mTitle = mDataBind.getRoot().findViewById(R.id.common_toolbar_title_tv);
         mTitle.setText(getString(R.string.menu_home));
 
         //banner
         mBannerList = new ArrayList<>();
-        mFragmentBinding.rvBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
+        mDataBind.rvBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
             @Override
             public void switchBanner(int position, AppCompatImageView bannerView) {
                 if (mActivity != null) {
@@ -85,7 +69,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        mFragmentBinding.rvBanner.setOnRvBannerClickListener(new RecyclerViewBanner.OnRvBannerClickListener() {
+        mDataBind.rvBanner.setOnRvBannerClickListener(new RecyclerViewBanner.OnRvBannerClickListener() {
             @Override
             public void onClick(int position) {
 //                Banner banner = banners.get(position);
@@ -99,10 +83,10 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        mFragmentBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mFragmentBinding.mRecyclerView.setHasFixedSize(true);
-        mFragmentBinding.mSmartRefreshLayout.setEnableLoadMore(true);
-        mFragmentBinding.mSmartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+        mDataBind.mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mDataBind.mRecyclerView.setHasFixedSize(true);
+        mDataBind.mSmartRefreshLayout.setEnableLoadMore(true);
+        mDataBind.mSmartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 isRefresh = false;
@@ -122,16 +106,17 @@ public class HomeFragment extends BaseFragment {
 
         mFeedArticleDataList = new ArrayList<FeedArticleBean>();
         articleListAdapter = new ArticleListAdapter(getActivity(), mFeedArticleDataList);
-        mFragmentBinding.mRecyclerView.setAdapter(articleListAdapter);
+        mDataBind.mRecyclerView.setAdapter(articleListAdapter);
     }
 
+    @Override
     protected void initData() {
 
         //Banner数据变化观察
         mViewModel.getBannerData().observe(getViewLifecycleOwner(), bannerBeans -> {
             mBannerList.clear();
             mBannerList.addAll(bannerBeans);
-            mFragmentBinding.rvBanner.setRvBannerData(mBannerList);
+            mDataBind.rvBanner.setRvBannerData(mBannerList);
         });
 
         //列表数据变化观察
@@ -141,8 +126,8 @@ public class HomeFragment extends BaseFragment {
             }
             mFeedArticleDataList.addAll(feedArticleListData.getDatas());
             articleListAdapter.setList(mFeedArticleDataList);
-            mFragmentBinding.mSmartRefreshLayout.finishRefresh();
-            mFragmentBinding.mSmartRefreshLayout.finishLoadMore();
+            mDataBind.mSmartRefreshLayout.finishRefresh();
+            mDataBind.mSmartRefreshLayout.finishLoadMore();
             isRefresh = false;
             isLoadMore = false;
         });

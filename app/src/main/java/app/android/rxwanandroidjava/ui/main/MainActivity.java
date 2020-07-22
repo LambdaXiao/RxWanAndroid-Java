@@ -1,6 +1,5 @@
 package app.android.rxwanandroidjava.ui.main;
 
-import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -27,9 +26,12 @@ public class MainActivity extends BaseActivity {
     private FragmentTransaction ft;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void initView() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -60,6 +62,11 @@ public class MainActivity extends BaseActivity {
 
         initFragments();
         switchFragment(0);
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     /**

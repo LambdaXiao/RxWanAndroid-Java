@@ -1,23 +1,15 @@
 package app.android.rxwanandroidjava.ui.project;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import app.android.rxwanandroidjava.R;
-import app.android.rxwanandroidjava.common.base.BaseFragment;
+import app.android.rxwanandroidjava.common.base.BaseDataBindingFragment;
 import app.android.rxwanandroidjava.databinding.ProjectFragmentBinding;
 
-public class ProjectFragment extends BaseFragment {
+public class ProjectFragment extends BaseDataBindingFragment<ProjectFragmentBinding> {
 
-    private ProjectFragmentBinding mFragmentBinding;
     private ProjectViewModel mViewModel;
     private TextView mTitle;
 
@@ -25,20 +17,21 @@ public class ProjectFragment extends BaseFragment {
         return new ProjectFragment();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.project_fragment, container, false);
-        mTitle = mFragmentBinding.getRoot().findViewById(R.id.common_toolbar_title_tv);
-        mTitle.setText(getString(R.string.menu_project));
-        return mFragmentBinding.getRoot();
+    protected int getLayoutId() {
+        return R.layout.project_fragment;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected void initView() {
         mViewModel = new ViewModelProvider(this).get(ProjectViewModel.class);
-        // TODO: Use the ViewModel
+
+        mTitle = mDataBind.getRoot().findViewById(R.id.common_toolbar_title_tv);
+        mTitle.setText(getString(R.string.menu_project));
     }
 
+    @Override
+    protected void initData() {
+
+    }
 }

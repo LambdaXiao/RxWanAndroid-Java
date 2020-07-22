@@ -12,7 +12,7 @@ import app.android.rxwanandroidjava.utils.ActivityManagerUtil;
 /**
  * 所有Activity的父类
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 全局的MyApplication实例
@@ -23,6 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mApplication = (MyApplication) getApplication();
         mActivity = this;
         //Activity堆栈管理
@@ -30,7 +31,23 @@ public class BaseActivity extends AppCompatActivity {
 
         getLifecycle().addObserver(ActivityLifecycleObserver.getInstance());
 
+        setContentLayout();
     }
+
+    protected void setContentLayout() {
+        setContentView(getLayoutId());
+        initView();
+        initData();
+    }
+
+    /**
+     * 子类必须实现的方法
+     */
+    protected abstract int getLayoutId();
+
+    protected abstract void initView();
+
+    protected abstract void initData();
 
     @Override
     protected void onDestroy() {
@@ -38,4 +55,5 @@ public class BaseActivity extends AppCompatActivity {
         //结束Activity&从栈中移除该Activity
         ActivityManagerUtil.getInstance().popActivity(this);
     }
+
 }

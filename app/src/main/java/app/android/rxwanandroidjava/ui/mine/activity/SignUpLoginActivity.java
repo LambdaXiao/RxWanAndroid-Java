@@ -3,7 +3,6 @@ package app.android.rxwanandroidjava.ui.mine.activity;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -53,9 +52,13 @@ public class SignUpLoginActivity extends BaseActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_login);
+    protected int getLayoutId() {
+        return R.layout.activity_sign_up_login;
+    }
+
+    @Override
+    protected void initView() {
+
         backImg = findViewById(R.id.backImg);
         signupUsername = findViewById(R.id.signup_username);
         signupPassword = findViewById(R.id.signup_password);
@@ -177,6 +180,11 @@ public class SignUpLoginActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     /**

@@ -1,33 +1,21 @@
 package app.android.rxwanandroidjava.ui.mine.activity;
 
 import android.animation.ValueAnimator;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.scwang.smartrefresh.header.FlyRefreshHeader;
-import com.scwang.smartrefresh.header.flyrefresh.FlyView;
-import com.scwang.smartrefresh.header.flyrefresh.MountainSceneView;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener;
 import com.scwang.smartrefresh.layout.util.DensityUtil;
 
 import app.android.rxwanandroidjava.R;
-import app.android.rxwanandroidjava.common.base.BaseActivity;
+import app.android.rxwanandroidjava.common.base.BaseDataBindingActivity;
+import app.android.rxwanandroidjava.databinding.ActivityAboutUserBinding;
 import app.android.rxwanandroidjava.utils.StatusBarUtil;
 import app.android.rxwanandroidjava.widget.ElasticOutInterpolator;
 
@@ -35,54 +23,35 @@ import app.android.rxwanandroidjava.widget.ElasticOutInterpolator;
  * 关于我们
  */
 
-public class AboutUserActivity extends BaseActivity {
+public class AboutUserActivity extends BaseDataBindingActivity<ActivityAboutUserBinding> {
 
-    MountainSceneView mAboutUsMountain;
-    Toolbar mToolbar;
-    CollapsingToolbarLayout mAboutUsToolbarLayout;
-    AppBarLayout mAboutUsAppBar;
-    FlyRefreshHeader mFlyRefreshHeader;
-    SmartRefreshLayout mAboutUsRefreshLayout;
-    FloatingActionButton mAboutUsFab;
-    FlyView mAboutUsFlyView;
-    NestedScrollView mScrollView;
-    TextView mAboutContent;
-    TextView mAboutVersion;
 
     private View.OnClickListener mThemeListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about_user);
-        mAboutUsMountain = findViewById(R.id.about_us_mountain);
-        mToolbar = findViewById(R.id.about_us_toolbar);
-        mAboutUsToolbarLayout = findViewById(R.id.about_us_toolbar_layout);
-        mAboutUsAppBar = findViewById(R.id.about_us_app_bar);
-        mFlyRefreshHeader = findViewById(R.id.about_us_fly_refresh);
-        mAboutUsRefreshLayout = findViewById(R.id.about_us_refresh_layout);
-        mAboutUsFab = findViewById(R.id.about_us_fab);
-        mAboutUsFlyView = findViewById(R.id.about_us_fly_view);
-        mScrollView = findViewById(R.id.about_us_content);
-        mAboutContent = findViewById(R.id.aboutContent);
-        mAboutVersion = findViewById(R.id.aboutVersion);
+    protected int getLayoutId() {
+        return R.layout.activity_about_user;
+    }
 
-        setSupportActionBar(mToolbar);
+    @Override
+    protected void initView() {
+
+        setSupportActionBar(mDataBind.aboutUsToolbar);
         StatusBarUtil.immersive(this);
-        StatusBarUtil.setPaddingSmart(this, mToolbar);
-        mToolbar.setNavigationOnClickListener(v -> onBackPressed());
+        StatusBarUtil.setPaddingSmart(this, mDataBind.aboutUsToolbar);
+        mDataBind.aboutUsToolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         showAboutContent();
         setSmartRefreshLayout();
 
         //进入界面时自动刷新
-        mAboutUsRefreshLayout.autoRefresh();
+        mDataBind.aboutUsRefreshLayout.autoRefresh();
 
         //点击悬浮按钮时自动刷新
-        mAboutUsFab.setOnClickListener(v -> mAboutUsRefreshLayout.autoRefresh());
+        mDataBind.aboutUsFab.setOnClickListener(v -> mDataBind.aboutUsRefreshLayout.autoRefresh());
 
         //监听 AppBarLayout 的关闭和开启 给 FlyView（纸飞机） 和 ActionButton 设置关闭隐藏动画
-        mAboutUsAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        mDataBind.aboutUsAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean misAppbarExpand = true;
 
             @Override
@@ -91,31 +60,31 @@ public class AboutUserActivity extends BaseActivity {
                 float fraction = 1f * (scrollRange + verticalOffset) / scrollRange;
                 double minFraction = 0.1;
                 double maxFraction = 0.8;
-                if (mScrollView == null || mAboutUsFab == null || mAboutUsFlyView == null) {
+                if (mDataBind.aboutUsContent == null || mDataBind.aboutUsFab == null || mDataBind.aboutUsFlyView == null) {
                     return;
                 }
                 if (fraction < minFraction && misAppbarExpand) {
                     misAppbarExpand = false;
-                    mAboutUsFab.animate().scaleX(0).scaleY(0);
-                    mAboutUsFlyView.animate().scaleX(0).scaleY(0);
-                    ValueAnimator animator = ValueAnimator.ofInt(mScrollView.getPaddingTop(), 0);
+                    mDataBind.aboutUsFab.animate().scaleX(0).scaleY(0);
+                    mDataBind.aboutUsFlyView.animate().scaleX(0).scaleY(0);
+                    ValueAnimator animator = ValueAnimator.ofInt(mDataBind.aboutUsContent.getPaddingTop(), 0);
                     animator.setDuration(300);
                     animator.addUpdateListener(animation -> {
-                        if (mScrollView != null) {
-                            mScrollView.setPadding(0, (int) animation.getAnimatedValue(), 0, 0);
+                        if (mDataBind.aboutUsContent != null) {
+                            mDataBind.aboutUsContent.setPadding(0, (int) animation.getAnimatedValue(), 0, 0);
                         }
                     });
                     animator.start();
                 }
                 if (fraction > maxFraction && !misAppbarExpand) {
                     misAppbarExpand = true;
-                    mAboutUsFab.animate().scaleX(1).scaleY(1);
-                    mAboutUsFlyView.animate().scaleX(1).scaleY(1);
-                    ValueAnimator animator = ValueAnimator.ofInt(mScrollView.getPaddingTop(), DensityUtil.dp2px(25));
+                    mDataBind.aboutUsFab.animate().scaleX(1).scaleY(1);
+                    mDataBind.aboutUsFlyView.animate().scaleX(1).scaleY(1);
+                    ValueAnimator animator = ValueAnimator.ofInt(mDataBind.aboutUsContent.getPaddingTop(), DensityUtil.dp2px(25));
                     animator.setDuration(300);
                     animator.addUpdateListener(animation -> {
-                        if (mScrollView != null) {
-                            mScrollView.setPadding(0, (int) animation.getAnimatedValue(), 0, 0);
+                        if (mDataBind.aboutUsContent != null) {
+                            mDataBind.aboutUsContent.setPadding(0, (int) animation.getAnimatedValue(), 0, 0);
                         }
                     });
                     animator.start();
@@ -124,18 +93,23 @@ public class AboutUserActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void initData() {
+
+    }
+
     private void setSmartRefreshLayout() {
         //绑定场景和纸飞机
-        mFlyRefreshHeader.setUp(mAboutUsMountain, mAboutUsFlyView);
-        mAboutUsRefreshLayout.setReboundInterpolator(new ElasticOutInterpolator());
-        mAboutUsRefreshLayout.setReboundDuration(800);
-        mAboutUsRefreshLayout.setOnRefreshListener(refreshLayout -> {
+        mDataBind.aboutUsFlyRefresh.setUp(mDataBind.aboutUsMountain, mDataBind.aboutUsFlyView);
+        mDataBind.aboutUsRefreshLayout.setReboundInterpolator(new ElasticOutInterpolator());
+        mDataBind.aboutUsRefreshLayout.setReboundDuration(800);
+        mDataBind.aboutUsRefreshLayout.setOnRefreshListener(refreshLayout -> {
             updateTheme();
             refreshLayout.finishRefresh(1000);
         });
 
         //设置让Toolbar和AppBarLayout的滚动同步
-        mAboutUsRefreshLayout.setOnMultiPurposeListener(new SimpleMultiPurposeListener() {
+        mDataBind.aboutUsRefreshLayout.setOnMultiPurposeListener(new SimpleMultiPurposeListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 super.onRefresh(refreshLayout);
@@ -151,25 +125,25 @@ public class AboutUserActivity extends BaseActivity {
             @Override
             public void onHeaderMoving(RefreshHeader header, boolean isDragging, float percent, int offset, int headerHeight, int maxDragHeight) {
                 super.onHeaderMoving(header, isDragging, percent, offset, headerHeight, maxDragHeight);
-                if (mAboutUsAppBar == null || mToolbar == null) {
+                if (mDataBind.aboutUsAppBar == null || mDataBind.aboutUsToolbar == null) {
                     return;
                 }
-                mAboutUsAppBar.setTranslationY(offset);
-                mToolbar.setTranslationY(-offset);
+                mDataBind.aboutUsAppBar.setTranslationY(offset);
+                mDataBind.aboutUsToolbar.setTranslationY(-offset);
             }
         });
     }
 
     private void showAboutContent() {
-        mAboutContent.setText(Html.fromHtml(getString(R.string.about_content)));
-        mAboutContent.setMovementMethod(LinkMovementMethod.getInstance());
-        try {
-            String versionStr = getString(R.string.app_name)
-                    + " V" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            mAboutVersion.setText(versionStr);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+//        mDataBind.aboutContent.setText(Html.fromHtml(getString(R.string.about_content)));
+//        mDataBind.aboutContent.setMovementMethod(LinkMovementMethod.getInstance());
+//        try {
+//            String versionStr = getString(R.string.app_name)
+//                    + " V" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+//            mDataBind.aboutVersion.setText(versionStr);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -190,10 +164,10 @@ public class AboutUserActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     int color = ContextCompat.getColor(getApplication(), ids[index % ids.length]);
-                    mAboutUsRefreshLayout.setPrimaryColors(color);
-                    mAboutUsFab.setBackgroundColor(color);
-                    mAboutUsFab.setBackgroundTintList(ColorStateList.valueOf(color));
-                    mAboutUsToolbarLayout.setContentScrimColor(color);
+                    mDataBind.aboutUsRefreshLayout.setPrimaryColors(color);
+                    mDataBind.aboutUsFab.setBackgroundColor(color);
+                    mDataBind.aboutUsFab.setBackgroundTintList(ColorStateList.valueOf(color));
+                    mDataBind.aboutUsToolbarLayout.setContentScrimColor(color);
                     index++;
                 }
             };

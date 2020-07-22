@@ -1,7 +1,6 @@
 package app.android.rxwanandroidjava.ui.main;
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.airbnb.lottie.LottieAnimationView;
 
@@ -16,11 +15,12 @@ public class SplashActivity extends BaseActivity {
     LottieAnimationView lottieAnimation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutId() {
+        return R.layout.activity_splash;
+    }
 
-        setContentView(R.layout.activity_splash);
-
+    @Override
+    protected void initView() {
         lottieAnimation = findViewById(R.id.lottieAnimation);
 
         lottieAnimation.postDelayed(new Runnable() {
@@ -30,6 +30,10 @@ public class SplashActivity extends BaseActivity {
                 finish();
             }
         }, 2000);
+    }
+
+    @Override
+    protected void initData() {
 
     }
 
