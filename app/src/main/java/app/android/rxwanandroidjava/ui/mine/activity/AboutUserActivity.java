@@ -11,7 +11,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener;
-import com.scwang.smartrefresh.layout.util.DensityUtil;
 
 import app.android.rxwanandroidjava.R;
 import app.android.rxwanandroidjava.common.base.BaseDataBindingActivity;
@@ -80,7 +79,7 @@ public class AboutUserActivity extends BaseDataBindingActivity<ActivityAboutUser
                     misAppbarExpand = true;
                     mDataBind.aboutUsFab.animate().scaleX(1).scaleY(1);
                     mDataBind.aboutUsFlyView.animate().scaleX(1).scaleY(1);
-                    ValueAnimator animator = ValueAnimator.ofInt(mDataBind.aboutUsContent.getPaddingTop(), DensityUtil.dp2px(25));
+                    ValueAnimator animator = ValueAnimator.ofInt(mDataBind.aboutUsContent.getPaddingTop(), 75);
                     animator.setDuration(300);
                     animator.addUpdateListener(animation -> {
                         if (mDataBind.aboutUsContent != null) {

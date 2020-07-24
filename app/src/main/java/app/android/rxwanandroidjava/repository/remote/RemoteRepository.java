@@ -1,6 +1,10 @@
 package app.android.rxwanandroidjava.repository.remote;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+
+import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
 
 import java.util.List;
 
@@ -27,9 +31,10 @@ public class RemoteRepository implements IRemoteRequest {
     }
 
     @Override
-    public void getBanner(MutableLiveData<List<BannerBean>> bannerData) {
+    public void getBanner(LifecycleOwner lifecycleOwner, MutableLiveData<List<BannerBean>> bannerData) {
         ApiClient.getInstance().getService().getBanner()
                 .compose(ApiClient.getInstance().threadTransformer())
+                .as(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
                 .subscribe(new ObserverWrapper<List<BannerBean>>(true) {
                     @Override
                     public void onSuccess(List<BannerBean> data) {
@@ -44,9 +49,10 @@ public class RemoteRepository implements IRemoteRequest {
     }
 
     @Override
-    public void getArticleList(MutableLiveData<FeedArticleList> feedArticleList, int pagenum) {
+    public void getArticleList(LifecycleOwner lifecycleOwner, MutableLiveData<FeedArticleList> feedArticleList, int pagenum) {
         ApiClient.getInstance().getService().getHomeArticle(pagenum)
                 .compose(ApiClient.getInstance().threadTransformer())
+                .as(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
                 .subscribe(new ObserverWrapper<FeedArticleList>(true) {
                     @Override
                     public void onSuccess(FeedArticleList data) {

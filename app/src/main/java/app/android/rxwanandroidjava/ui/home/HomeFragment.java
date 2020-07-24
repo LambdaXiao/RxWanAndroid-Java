@@ -92,7 +92,7 @@ public class HomeFragment extends BaseDataBindingFragment<HomeFragmentBinding> {
                 isRefresh = false;
                 isLoadMore = true;
                 pagenum++;
-                mViewModel.requestArticleList(pagenum);
+                mViewModel.requestArticleList(getViewLifecycleOwner(), pagenum);
             }
 
             @Override
@@ -100,7 +100,7 @@ public class HomeFragment extends BaseDataBindingFragment<HomeFragmentBinding> {
                 isRefresh = true;
                 isLoadMore = false;
                 pagenum = 0;
-                mViewModel.requestArticleList(pagenum);
+                mViewModel.requestArticleList(getViewLifecycleOwner(), pagenum);
             }
         });
 
@@ -133,7 +133,7 @@ public class HomeFragment extends BaseDataBindingFragment<HomeFragmentBinding> {
         });
 
         //请求数据
-        mViewModel.requestBanner();
-        mViewModel.requestArticleList(pagenum);
+        mViewModel.requestBanner(getViewLifecycleOwner());
+        mViewModel.requestArticleList(getViewLifecycleOwner(), pagenum);
     }
 }

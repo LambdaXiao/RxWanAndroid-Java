@@ -1,5 +1,6 @@
 package app.android.rxwanandroidjava.repository.remote;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
@@ -14,8 +15,8 @@ import app.android.rxwanandroidjava.ui.home.bean.FeedArticleList;
 public interface IRemoteRequest {
 
     // 得到首页banner
-    void getBanner(MutableLiveData<List<BannerBean>> bannerData);
+    void getBanner(LifecycleOwner lifecycleOwner, MutableLiveData<List<BannerBean>> bannerData);
 
     // 得到首页文章列表
-    void getArticleList(MutableLiveData<FeedArticleList> feedArticleList, int pagenum);
+    void getArticleList(LifecycleOwner lifecycleOwner, MutableLiveData<FeedArticleList> feedArticleList, int pagenum);
 }

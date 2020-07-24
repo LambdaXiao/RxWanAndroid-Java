@@ -1,5 +1,6 @@
 package app.android.rxwanandroidjava.ui.home;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -30,14 +31,14 @@ public class HomeViewModel extends ViewModel {
     /**
      * 首页banner
      */
-    public void requestBanner() {
-        RemoteRepository.getInstance().getBanner(getBannerData());
+    public void requestBanner(LifecycleOwner lifecycleOwner) {
+        RemoteRepository.getInstance().getBanner(lifecycleOwner, getBannerData());
     }
 
     /**
      * 获取首页文章列表
      */
-    public void requestArticleList(int pagenum) {
-        RemoteRepository.getInstance().getArticleList(getArticleList(), pagenum);
+    public void requestArticleList(LifecycleOwner lifecycleOwner, int pagenum) {
+        RemoteRepository.getInstance().getArticleList(lifecycleOwner, getArticleList(), pagenum);
     }
 }
